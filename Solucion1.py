@@ -187,7 +187,9 @@ def calcular_estadisticas(sedes):
     # Equipo con mayor y menor rendimiento
     todos_equipos = [eq for sede in sedes for eq in sede.equipos]
     equipo_mayor = max(todos_equipos, key=lambda e: e.promedio)
+    equipo_mayor_sede = find_equipo_sede(equipo_mayor, sedes)
     equipo_menor = min(todos_equipos, key=lambda e: e.promedio)
+    equipo_menor_sede = find_equipo_sede(equipo_menor, sedes)
     
     return {
         "jugador_mayor_rend": jugador_mayor_rend,
@@ -197,38 +199,46 @@ def calcular_estadisticas(sedes):
         "promedio_edad": promedio_edad,
         "promedio_rendimiento": promedio_rendimiento,
         "equipo_mayor": equipo_mayor,
-        "equipo_menor": equipo_menor
+        "equipo_mayor_sede": equipo_mayor_sede,
+        "equipo_menor": equipo_menor,
+        "equipo_menor_sede": equipo_menor_sede
     }
+
+def find_equipo_sede(equipo, sedes):
+    for sede in sedes:
+        if equipo in sede.equipos:
+            return sede
+    return None
 
 # --------------------------
 # LECTURA DE ARCHIVO (input1.txt formato)
 # --------------------------
 def leer_archivo(ruta):
-    # Esta función simula la lectura del archivo .txt
-    # En implementación real, se parsearía el .txt
-    # Aquí devolvemos datos de ejemplo basados en input1.txt
-    j1 = Jugador("Juan", 20, 94)
-    j2 = Jugador("Maria", 21, 94)
-    j3 = Jugador("Pedro", 22, 21)
-    j4 = Jugador("Ana", 23, 25)
-    j5 = Jugador("Carlos", 24, 66)
-    j6 = Jugador("Laura", 25, 52)
-    j7 = Jugador("Jose", 26, 48)
-    j8 = Jugador("Luis", 27, 73)
-    j9 = Jugador("Sara", 28, 92)
-    j10 = Jugador("Jorge", 29, 51)
-    j11 = Jugador("Lorena", 30, 90)
-    j12 = Jugador("Raul", 31, 100)
+    jugadores, equipos, sedes = {}, {}, []
     
-    e1 = Equipo("Futbol", [j1, j2, j3])
-    e2 = Equipo("Volleyball", [j4, j5, j6])
-    e3 = Equipo("Futbol", [j7, j8, j9])
-    e4 = Equipo("Volleyball", [j10, j11, j12])
-    
-    s1 = Sede("Sede Cali", [e1, e2])
-    s2 = Sede("Sede Medellin", [e3, e4])
-    
-    return [s1, s2]
+    try:
+        with open(ruta, 'r') as f:
+            txt = f.read()
+        
+        # Jugadores
+        import re
+        for var, nom, edad, hab in re.findall(r'(\w+)\s*=.*Jugador\("([^"]+)",\s*(\d+),\s*(\d+)', txt):
+            jugadores[var] = Jugador(nom, int(edad), int(hab))
+        
+        # Equipos
+        for var, dep, jugs in re.findall(r'(\w+)\s*=.*Equipo\("([^"]+)",\s*\[([^\]]+)', txt):
+            lista_j = [jugadores[j.strip()] for j in jugs.split(',')]
+            equipos[var] = Equipo(dep, lista_j)
+        
+        # Sedes
+        for nombre, eqs in re.findall(r'Sede\("([^"]+)",\s*\[([^\]]+)', txt):
+            lista_e = [equipos[e.strip()] for e in eqs.split(',')]
+            sedes.append(Sede(nombre, lista_e))
+        
+        return sedes
+        
+    except Exception:
+        return []
 
 # --------------------------
 # IMPRESIÓN DE RESULTADOS
@@ -243,8 +253,8 @@ def imprimir_resultados(sedes_ordenadas, ranking, stats):
     print("Ranking Jugadores:")
     print("{" + ", ".join(str(j.id) for j in ranking) + "}\n")
     
-    print(f"Equipo con mayor rendimiento: {stats['equipo_mayor'].deporte} {stats['equipo_mayor']}")
-    print(f"Equipo con menor rendimiento: {stats['equipo_menor'].deporte} {stats['equipo_menor']}")
+    print(f"Equipo con mayor rendimiento: {stats['equipo_mayor'].deporte} {stats['equipo_mayor_sede']}")
+    print(f"Equipo con menor rendimiento: {stats['equipo_menor'].deporte} {stats['equipo_menor_sede']}")
     print(f"Jugador con mayor rendimiento: {{ {stats['jugador_mayor_rend'].id} , {stats['jugador_mayor_rend'].nombre} , {stats['jugador_mayor_rend'].rendimiento} }}")
     print(f"Jugador con menor rendimiento: {{ {stats['jugador_menor_rend'].id} , {stats['jugador_menor_rend'].nombre} , {stats['jugador_menor_rend'].rendimiento} }}")
     print(f"Jugador más joven: {{ {stats['jugador_joven'].id} , {stats['jugador_joven'].nombre} , {stats['jugador_joven'].edad} }}")
@@ -257,7 +267,7 @@ def imprimir_resultados(sedes_ordenadas, ranking, stats):
 # --------------------------
 if __name__ == "__main__":
     # Leer datos
-    sedes = leer_archivo("input1.txt")
+    sedes = leer_archivo("input3.txt")
     
     # Procesar
     sedes_ordenadas, ranking = procesar_solucion1(sedes)
