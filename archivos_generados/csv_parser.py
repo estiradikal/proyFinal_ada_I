@@ -1,4 +1,5 @@
 import csv
+import os
 
 def csv_a_txt_jugadores(archivo_csv, archivo_txt):
 
@@ -8,7 +9,15 @@ def csv_a_txt_jugadores(archivo_csv, archivo_txt):
     Ejemplo de salida TXT: jugadores.txt
     """
     
-    with open(archivo_csv, 'r') as f, open(archivo_txt, 'w') as out:
+    # Crear carpeta si no existe
+    carpeta = "archivos_generados"
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
+    
+    # Ruta completa del archivo de salida
+    ruta_salida = os.path.join(carpeta, archivo_txt)
+    
+    with open(archivo_csv, 'r') as f, open(ruta_salida, 'w') as out:
         rows = list(csv.DictReader(f))
         out.writelines(
             f'j{i+1} = Jugador.Jugador("{r["first_name"]} {r["last_name"]}", '
@@ -26,14 +35,19 @@ def generador_equipos(archivo_salida, num_equipos, jugadores_por_equipo, num_dep
         num_deportes: Número de deportes a usar (1-10). Si None, usa todos.
     """
     
+    carpeta = "archivos_generados"
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
+    
+    ruta_completa = os.path.join(carpeta, archivo_salida)
+    
     deportes = ["Fútbol", "Baloncesto", "Tenis", "Natación", "Atletismo", 
                 "Voleibol", "Boxeo", "Ciclismo", "Gimnasia", "Hockey"]
     
-    # Limitar deportes si se especifica
     if num_deportes is not None:
         deportes = deportes[:num_deportes]
     
-    with open(archivo_salida, 'w') as f:
+    with open(ruta_completa, 'w') as f:
         for i in range(num_equipos):
             deporte = deportes[i % len(deportes)]
             jug_inicial = i * jugadores_por_equipo + 1
@@ -50,10 +64,18 @@ def generar_sedes(archivo_salida, num_sedes=10, equipos_por_sede=10):
     Ejemplo de salida TXT: sedes.txt
     Ajustable el número de sedes y equipos por sede."""
 
+    # Crear carpeta si no existe
+    carpeta = "archivos_generados"
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
+    
+    # Ruta completa del archivo
+    ruta_completa = os.path.join(carpeta, archivo_salida)
+    
     ciudades = ["Cali", "Medellín", "Bogotá", "Barranquilla", "Cartagena",
                 "Cúcuta", "Bucaramanga", "Pereira", "Manizales", "Santa Marta"]
     
-    with open(archivo_salida, 'w') as f:
+    with open(ruta_completa, 'w') as f:
         for i in range(num_sedes):
             ciudad = ciudades[i]
             equipo_inicial = i * equipos_por_sede + 1
@@ -67,8 +89,8 @@ if __name__ == "__main__":
     """ Genera archivos de texto con datos de jugadores, equipos y sedes.
         Descomentar las líneas necesarias para generar los archivos deseados."""
 
-    #csv_a_txt_jugadores('RandomData.csv', 'jugadores.txt')
+    #csv_a_txt_jugadores('archivos_generados/RandomData.csv', 'jugadores.txt')
     #generador_equipos('equipos.txt', num_equipos=10, jugadores_por_equipo=10, num_deportes=2)
-    generar_sedes('sedes.txt', num_sedes=5, equipos_por_sede=2)
+    #generar_sedes('sedes.txt', num_sedes=5, equipos_por_sede=2)
 
     print("Archivos generados correctamente.")
