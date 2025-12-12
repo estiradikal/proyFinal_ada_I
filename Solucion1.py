@@ -1,4 +1,5 @@
 import sys
+import time
 # --------------------------
 # CLASES BÁSICAS
 # --------------------------
@@ -219,7 +220,9 @@ def leer_archivo(ruta):
     
     try:
         with open(ruta, 'r') as f:
-            txt = f.read()
+            lineas = f.readlines()
+            lineas_no_vacias = len([l for l in lineas if l.strip()])
+            txt = ''.join(lineas)
         
         # Jugadores
         import re
@@ -236,10 +239,10 @@ def leer_archivo(ruta):
             lista_e = [equipos[e.strip()] for e in eqs.split(',')]
             sedes.append(Sede(nombre, lista_e))
         
-        return sedes
+        return sedes, lineas_no_vacias
         
     except Exception:
-        return []
+        return [], 0
 
 # --------------------------
 # IMPRESIÓN DE RESULTADOS
@@ -263,6 +266,9 @@ def imprimir_resultados(sedes_ordenadas, ranking, stats):
     print(f"Promedio de edad de los jugadores: {stats['promedio_edad']}")
     print(f"Promedio de rendimiento de los jugadores: {stats['promedio_rendimiento']}")
 
+def imprimir_analisis_tiempo(tiempo, longitud):
+    print(f"Tiempo de ejecución para {longitud} elementos: {tiempo} segundos")
+
 # --------------------------
 # EJECUCIÓN PRINCIPAL
 # --------------------------
@@ -272,13 +278,24 @@ if __name__ == "__main__":
         sys.exit(1)
     
     archivo = sys.argv[1]
-    sedes = leer_archivo(archivo)
+    sedes, tamano_entrada = leer_archivo(archivo)
     
+    ## EMPIEZA CONTEO DE TIEMPO
+    start_time = time.time()
+
     # Procesar
     sedes_ordenadas, ranking = procesar_solucion1(sedes)
     
     # Calcular estadísticas
     stats = calcular_estadisticas(sedes_ordenadas)
     
+    ##  TERMINA CONTEO DE TIEMPO
+    end_time = time.time()
+
+    ## Calcular tiempo transcurrido
+    elapsed_time = end_time - start_time
+
     # Imprimir resultados
     imprimir_resultados(sedes_ordenadas, ranking, stats)
+
+    imprimir_analisis_tiempo(elapsed_time, tamano_entrada)
