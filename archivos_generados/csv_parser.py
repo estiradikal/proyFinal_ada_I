@@ -90,7 +90,7 @@ if __name__ == "__main__":
         Descomentar las líneas necesarias para generar los archivos deseados."""
 
     #csv_a_txt_jugadores('archivos_generados/RandomData.csv', 'jugadores.txt')
-    #generador_equipos('equipos.txt', num_equipos=10, jugadores_por_equipo=10, num_deportes=2)
-    #generar_sedes('sedes.txt', num_sedes=5, equipos_por_sede=2)
+    generador_equipos('equipos.txt', num_equipos=75, jugadores_por_equipo=20, num_deportes=10)
+    generar_sedes('sedes.txt', num_sedes=8, equipos_por_sede=10)
 
     print("Archivos generados correctamente.")
