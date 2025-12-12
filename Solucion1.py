@@ -1,3 +1,4 @@
+import sys
 # --------------------------
 # CLASES BÁSICAS
 # --------------------------
@@ -266,8 +267,12 @@ def imprimir_resultados(sedes_ordenadas, ranking, stats):
 # EJECUCIÓN PRINCIPAL
 # --------------------------
 if __name__ == "__main__":
-    # Leer datos
-    sedes = leer_archivo("input3.txt")
+    if len(sys.argv) < 2:
+        print("Uso: python programa.py <archivo_entrada>")
+        sys.exit(1)
+    
+    archivo = sys.argv[1]
+    sedes = leer_archivo(archivo)
     
     # Procesar
     sedes_ordenadas, ranking = procesar_solucion1(sedes)
