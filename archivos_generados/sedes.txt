@@ -1,0 +1,5 @@
+s1 = Sede.Sede("Sede Cali", [e1, e2])
+s2 = Sede.Sede("Sede Medellín", [e3, e4])
+s3 = Sede.Sede("Sede Bogotá", [e5, e6])
+s4 = Sede.Sede("Sede Barranquilla", [e7, e8])
+s5 = Sede.Sede("Sede Cartagena", [e9, e10])

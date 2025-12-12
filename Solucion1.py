@@ -1,5 +1,7 @@
 import sys
 import time
+import re
+
 # --------------------------
 # CLASES BÁSICAS
 # --------------------------
@@ -225,7 +227,6 @@ def leer_archivo(ruta):
             txt = ''.join(lineas)
         
         # Jugadores
-        import re
         for var, nom, edad, hab in re.findall(r'(\w+)\s*=.*Jugador\("([^"]+)",\s*(\d+),\s*(\d+)', txt):
             jugadores[var] = Jugador(nom, int(edad), int(hab))
         
@@ -277,6 +278,9 @@ if __name__ == "__main__":
         print("Uso: python programa.py <archivo_entrada>")
         sys.exit(1)
     
+    # Para mandar archivos de entrada como argumento al ejecutar el programa desde consola
+    # Ejemplo: python3 Solucion1.py inputs_tamanos/input_2000.txt
+
     archivo = sys.argv[1]
     sedes, tamano_entrada = leer_archivo(archivo)
     
